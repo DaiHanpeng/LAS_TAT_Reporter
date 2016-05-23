@@ -35,8 +35,11 @@ class LisInParser():
                             #log_date_time = datetime.strptime(current_date_time,r'%Y-%m-%d %H:%M:%S')
                         elif  -1 <> line.find(r'Rdl') and -1 <> line.find(r'O|1|'):#line.startswith(r'O|1|')
                             sample_id = line.split(r'|')[2]
-                            #if not self.sample_order_map.has_key(sample_id):
-                            self.sample_order_map[sample_id] = current_date_time
+                            if not self.sample_order_map.has_key(sample_id):
+                                self.sample_order_map[sample_id] = current_date_time
+                            elif self.sample_order_map[sample_id] > current_date_time:
+                                self.sample_order_map[sample_id] = current_date_time
+
 
 
     def to_db(self):

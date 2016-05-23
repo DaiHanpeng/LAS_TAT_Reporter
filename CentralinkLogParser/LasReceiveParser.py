@@ -33,11 +33,12 @@ class LasReceiveParser():
                         if -1 <> line.find(r'*** INFO [IO-TCP]'):
                             current_date_time =  (' ').join(line.split()[-2:])[:-3]
                             #log_date_time = datetime.strptime(current_date_time,r'%Y-%m-%d %H:%M:%S')
-                        elif  -1 <> line.find(r'C|1|I|L001^'):
-                            sample_id = line.split(r'C|1|I|L001^')[1].split('\\')[0]
-                            #if not self.sample_order_map.has_key(sample_id):
-                            self.sample_inlab_map[sample_id] = current_date_time
-
+                        elif  -1 <> line.find(r'|I|L001^'):
+                            sample_id = line.split(r'|I|L001^')[1].split('\\')[0]
+                            if not self.sample_inlab_map.has_key(sample_id):
+                                self.sample_inlab_map[sample_id] = current_date_time
+                            elif self.sample_inlab_map[sample_id] > current_date_time:
+                                elf.sample_inlab_map[sample_id] = current_date_time
 
     def to_db(self):
         db_interface = DBInterface()
@@ -55,7 +56,7 @@ class LasReceiveParser():
 def test():
     #print 'O|1|5400555276||^^^LAC|R||2015122105241401||||N||||||||||||||||IP'.startswith(r'O|1|')
 
-    las_receive_log_folder = r'D:\01_Automation\23_Experiential_Conclusions_2016\19_Anhui_Provicial_Hospital\Log\trl\Auto_Receive'
+    las_receive_log_folder = r'D:\01_Automation\05_Experiential_Conclusions\37_Wenzhou\20141117_Backup\trl\trl\Auto_Receive'
     las_receive_log_file_list = FilesFilter.get_files_list(las_receive_log_folder)
 
     #print las_receive_log_file_list
