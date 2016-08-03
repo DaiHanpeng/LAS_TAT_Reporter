@@ -44,9 +44,9 @@ class ParserManager():
                     centaur_log_list += FilesFilter.get_files_list(os.path.join(trl_log_folder_path,dir),start_date,end_date)
                 elif r'Auto_Receive' == dir:
                     las_receive_log_list = FilesFilter.get_files_list(os.path.join(trl_log_folder_path,dir),start_date,end_date)
-                elif r'LIS_Translator_in' == dir:
+                elif r'LIS_IN_Translator' == dir:
                     lis_in_log_list = FilesFilter.get_files_list(os.path.join(trl_log_folder_path,dir),start_date,end_date)
-                elif r'LIS_Translator_out' == dir:
+                elif r'LIS_OUT_Translator' == dir:
                     lis_out_log_list = FilesFilter.get_files_list(os.path.join(trl_log_folder_path,dir),start_date,end_date)
 
         parser_threads = []
@@ -69,7 +69,7 @@ def test():
 
 def test2():
     #trl_log_folder_path = r'D:\01_Automation\23_Experiential_Conclusions_2016\19_Anhui_Provicial_Hospital\Log\trl'
-    trl_log_folder_path=r'D:\01_Automation\05_Experiential_Conclusions\37_Wenzhou\20141117_Backup\trl\trl'
+    trl_log_folder_path=r'D:\01_Automation\20_Experiential_Conclusions_2015\53_Zhongshan_Aptio\02_Centralink\Log\trl'
     start_date = None
     end_date = None
 
@@ -88,10 +88,10 @@ def test2():
                 centaur_log_list += FilesFilter.get_files_list(os.path.join(trl_log_folder_path,dir),start_date,end_date)
             elif r'Auto_Receive' == dir:
                 las_receive_log_list = FilesFilter.get_files_list(os.path.join(trl_log_folder_path,dir),start_date,end_date)
-            elif -1 <> dir.find(r'LIS_') and dir[-2:].lower() == r'in':
+            elif r'LIS_IN_Translator' == dir:
                 lis_in_log_list = FilesFilter.get_files_list(os.path.join(trl_log_folder_path,dir),start_date,end_date)
                 print 'lis in:',lis_in_log_list
-            elif -1 <> dir.find(r'LIS_') and dir[-3:].lower() == r'out':
+            elif r'LIS_OUT_Translator' == dir:
                 lis_out_log_list = FilesFilter.get_files_list(os.path.join(trl_log_folder_path,dir),start_date,end_date)
                 print 'lis out:',lis_out_log_list
 

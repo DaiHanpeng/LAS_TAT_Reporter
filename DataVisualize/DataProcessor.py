@@ -3,6 +3,7 @@ import pandas as pd
 from pandas import DataFrame
 import matplotlib.pyplot as plt
 
+
 class DataProcessor():
     """
 
@@ -25,7 +26,9 @@ def test():
     data_processor = DataProcessor()
     data_processor.process(csv_path)
 
-    plt.plot([1,2,3,4,5,6,7,8])
+    plt.plot([1,2,3,4,5,6,7,8],[1,2,3,4,5,6,7,8])
+
+    plt.savefig('plot01.png')
 
 if __name__ == '__main__':
     test()
