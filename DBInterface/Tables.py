@@ -47,10 +47,29 @@ class TAT_Table(BaseModel):
     sample_id = Column(String(48), primary_key=True, nullable=False)
     lis_order = Column(String(24))
     las_inlab = Column(String(24))
+    centrifuge_in = Column(String(24))
+    centrifuge_out = Column(String(24))
+    decap = Column(String(24))
     advia_query = Column(String(24))
     advia_result = Column(String(24))
     centaur_query = Column(String(24))
     centaur_result = Column(String(24))
+    seal = Column(String(24))
+    store = Column(String(24))
     lis_upload = Column(String(24))
+
     def __init__(self,sample_id):
         self.sample_id = sample_id
+
+
+class TAT_Update_Timestamp_Table(BaseModel):
+    __tablename__ = 'tat_last_update_timestamp'
+    type_id = Column(String(16), primary_key=True, nullable=False)
+    last_file_update_timestamp = Column(String(24))
+    last_record_update_timestamp = Column(String(24))
+
+    def __init__(self,type_id,last_file_update_timestamp='0',last_record_update_timestamp='0'):
+        self.type_id = type_id
+        self.last_file_update_timestamp = last_file_update_timestamp
+        self.last_record_update_timestamp = last_record_update_timestamp
+
