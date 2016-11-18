@@ -25,6 +25,42 @@ class FilesFilter():
         return file_list
 
 
+    @staticmethod
+    def get_files_after_a_modified_timestamp(path_to_folder,modified_timestamp=0,startswith=r''):
+        file_list = []
+        folder_file_list = os.listdir(path_to_folder)
+        filted_file_list = []
+
+        for item in folder_file_list:
+            if item.startswith(startswith):
+                filted_file_list.append(os.path.join(path_to_folder,item))
+
+        for f in filted_file_list:
+            if os.path.getmtime(f) > float(modified_timestamp):
+                #print os.path.getmtime(f)
+                file_list.append(f)
+
+        return file_list
+
+    @staticmethod
+    def get_latest_modified_timestamp(path_to_folder,startswith=r''):
+        latest_modified_timestamp = 0
+
+        folder_file_list = os.listdir(path_to_folder)
+        filted_file_list = []
+
+        for item in folder_file_list:
+            if item.startswith(startswith):
+                filted_file_list.append(os.path.join(path_to_folder,item))
+
+        for f in filted_file_list:
+            if os.path.getmtime(f) > latest_modified_timestamp:
+                latest_modified_timestamp = os.path.getmtime(f)
+                #print latest_modified_timestamp
+
+        return str(latest_modified_timestamp)
+
+
 def test():
 
     #files_filter = FilesFilter()
@@ -55,7 +91,20 @@ def test():
     print start_date,end_date
     '''
 
+def test2():
+    directory = r"D:\01_Automation\23_Experiential_Conclusions_2016\23_Zhongshan"
+    modified_timestamp = 1477918765
+
+    files_arrays = FilesFilter.get_files_after_a_modified_timestamp(directory,modified_timestamp)
+    print files_arrays
+
+def test3():
+    directory = r"D:\01_Automation\23_Experiential_Conclusions_2016\23_Zhongshan"
+    print 'latest file timestamp:', FilesFilter.get_latest_modified_timestamp(directory)
+
+
 if __name__ == '__main__':
-    #test()
-    print os.listdir(r'D:\01_Automation\23_Experiential_Conclusions_2016\19_Anhui_Provicial_Hospital\Log\trl')
+    test2()
+    test3()
+    #print os.listdir(r'D:\01_Automation\23_Experiential_Conclusions_2016\19_Anhui_Provicial_Hospital\Log\trl')
 
