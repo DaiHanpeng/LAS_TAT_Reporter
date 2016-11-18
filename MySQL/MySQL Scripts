@@ -1,0 +1,34 @@
+UPDATE tat.tat SET inlab_cat = 'morning'  WHERE HOUR(las_inlab) < 11;
+UPDATE tat.tat SET inlab_cat = 'noon'  WHERE HOUR(las_inlab) >= 11 AND HOUR(las_inlab) < 14;
+UPDATE tat.tat SET inlab_cat = 'afternoon'  WHERE HOUR(las_inlab) >= 14;
+
+UPDATE tat.tat SET TAT = TIMESTAMPDIFF(MINUTE,las_inlab,lis_upload) WHERE las_inlab is not NULL and lis_upload is not NULL;
+UPDATE tat.tat SET CM_TAT = TIMESTAMPDIFF(MINUTE,centrifuge_in,centrifuge_out) WHERE centrifuge_in is not NULL and centrifuge_out is not NULL;
+UPDATE tat.tat SET Chem_TAT = TIMESTAMPDIFF(MINUTE,advia_query,advia_result) WHERE advia_query is not NULL and advia_result is not NULL;
+UPDATE tat.tat SET Immu_TAT = TIMESTAMPDIFF(MINUTE,centaur_query,centaur_result) WHERE centaur_query is not NULL and centaur_result is not NULL;
+UPDATE tat.tat SET Track_TAT = TIMESTAMPDIFF(MINUTE,las_inlab,store) WHERE las_inlab is not NULL and store is not NULL;
+
+
+UPDATE tat.tat SET analyzer_type = 'advia2400'  WHERE advia_result is not NULL And centaur_result is NULL;
+UPDATE tat.tat SET analyzer_type = 'centaur'  WHERE advia_result is NULL And centaur_result is not NULL;
+UPDATE tat.tat SET analyzer_type = 'both'  WHERE advia_result is not NULL And centaur_result is not NULL;
+
+
+select sample_id,las_inlab,lis_upload,TAT from tat.tat where TAT >= 20 and TAT < 300 ;
+select sample_id,centrifuge_in,centrifuge_out,CM_TAT from tat.tat where CM_TAT > 0 ;
+select sample_id,advia_query,advia_result,Chem_TAT from tat.tat where  Chem_TAT > 0;
+select sample_id,centaur_query,centaur_result,Immu_TAT from tat.tat where Immu_TAT > 0;
+select sample_id,las_inlab,store,Track_TAT from tat.tat where Track_TAT > 0;
+
+select avg(TAT) from tat.tat;
+select avg(CM_TAT) from tat.tat;
+select avg(Chem_TAT) from tat.tat where Chem_TAT > 5 and Chem_TAT < 100;
+select avg(Immu_TAT) from tat.tat;
+select avg(Track_TAT) from tat.tat;
+
+delete from tat.tat;
+delete from tat.tat_last_update_timestamp;
+
+select TIMESTAMPDIFF(minute,'20161110093252','2016-09-22 09:13:21');
+
+
