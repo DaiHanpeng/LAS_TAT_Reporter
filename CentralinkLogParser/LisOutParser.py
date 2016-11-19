@@ -2,6 +2,7 @@ from datetime import *
 
 from FilesFilter.FilesFilter import FilesFilter
 
+from DBInterface.Result_Interface import Result_Table,Result_Interface
 from DBInterface.DBInterface import DBInterface,DBInterface_TAT_Update_Timestamp
 
 TABLE_UPDATE_TIMESTAMP_ID = r'LIS_Out'
@@ -20,8 +21,13 @@ class LisOutParser():
 
         self.sample_result_map = {}# map sample id with it's resulting timestamp.
 
+        self.result_list = list()
+
     def parse(self,log_file_list):
         self.sample_result_map = {}
+
+        self.result_list = []
+        temp_result_list = []
 
         current_date_time = ''
         last_updated_record_timestamp = self.last_updated_record_timestamp
@@ -34,7 +40,7 @@ class LisOutParser():
             file_content_list = []
             if isinstance(item,str):
                 try:
-                    lis_out_file_handler = open(item)
+                    lis_out_file_handler = open(item,mode='rU')
                     file_content_list = lis_out_file_handler.readlines()
                     file_content_list.reverse()
                 except Exception as e:
@@ -50,7 +56,7 @@ class LisOutParser():
                             current_date_time =  (' ').join(line.split()[-2:])[:-3]
                             #log_date_time = datetime.strptime(current_date_time,r'%Y-%m-%d %H:%M:%S')
                             if current_date_time < self.last_updated_record_timestamp:
-                                print current_date_time
+                                print 'lis out log parsed to: ', current_date_time
                                 break
                         elif  -1 <> line.find(r'Xmt') and -1 <> line.find(r'O|1|'):#line.startswith(r'O|1|')
                             sample_id = line.split(r'|')[2]
@@ -58,6 +64,25 @@ class LisOutParser():
                                 self.sample_result_map[sample_id] = current_date_time
                             elif self.sample_result_map[sample_id] < current_date_time:
                                 self.sample_result_map[sample_id] = current_date_time
+                        #parsing for result information
+                        elif line.startswith(r'R|') and len(line.split(r'|')) > 7:
+                            sample_id = ''
+                            test_code = line.split(r'^^^')[1].split(r'^')[0]
+                            analyzer_id = line.split(r'||')[-1].strip('\n')
+                            value = line.split(r'|')[3]
+                            timestamp = line.split(r'|')[-3]
+                            if test_code and analyzer_id and value and timestamp:
+                                temp_result_list.append(Result_Table(sample_id,test_code,analyzer_id,value,timestamp))
+                                #print 'result: ', 'test_code: ',test_code,'analyzer_id: ',analyzer_id,'value: ',value,'timestamp: ',timestamp
+                        elif line.startswith(r'O|1|'):
+                            #print line
+                            if temp_result_list and isinstance(temp_result_list,list):
+                                for item in temp_result_list:
+                                    if isinstance(item,Result_Table):
+                                        item.sample_id = line.split(r'O|1|')[1].split(r'|')[0]
+                                        #print 'sample id: ', item.sample_id
+                                self.result_list += temp_result_list
+                                temp_result_list = []
                 if last_updated_record_timestamp < current_date_time:
                     last_updated_record_timestamp = current_date_time
 
@@ -71,6 +96,12 @@ class LisOutParser():
     def to_db(self):
         db_interface = DBInterface()
         db_interface.insert_lis_result(self.sample_result_map)
+
+        db_result_interface = Result_Interface()
+        db_result_interface.add_new_records(self.result_list)
+        print 'result list'
+        for item in self.result_list:
+            print item
 
     def pre_work(self,log_folder):
         #please keep this evaluate sequence...
