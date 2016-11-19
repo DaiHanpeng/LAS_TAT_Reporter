@@ -36,7 +36,7 @@ class FilesFilter():
                 filted_file_list.append(os.path.join(path_to_folder,item))
 
         for f in filted_file_list:
-            if os.path.getmtime(f) > float(modified_timestamp):
+            if str(os.path.getmtime(f)) > str(modified_timestamp):
                 #print os.path.getmtime(f)
                 file_list.append(f)
 
@@ -92,15 +92,16 @@ def test():
     '''
 
 def test2():
-    directory = r"D:\01_Automation\23_Experiential_Conclusions_2016\23_Zhongshan"
-    modified_timestamp = 1477918765
+    directory = r"F:\Zhongshan\log_aptio_20161110\Log"
+    modified_timestamp = 1479292284.55
 
-    files_arrays = FilesFilter.get_files_after_a_modified_timestamp(directory,modified_timestamp)
+    files_arrays = FilesFilter.get_files_after_a_modified_timestamp(directory,modified_timestamp,'CONTROL')
     print files_arrays
 
 def test3():
-    directory = r"D:\01_Automation\23_Experiential_Conclusions_2016\23_Zhongshan"
-    print 'latest file timestamp:', FilesFilter.get_latest_modified_timestamp(directory)
+    directory = r"F:\Zhongshan\log_aptio_20161110\Log"
+    print 'latest file timestamp:', FilesFilter.get_latest_modified_timestamp(directory,'CONTROL')
+    print 'mtime for control.txt', os.path.getmtime(r'F:\Zhongshan\log_aptio_20161110\Log\control.txt')
 
 
 if __name__ == '__main__':
