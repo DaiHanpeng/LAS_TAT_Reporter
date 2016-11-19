@@ -73,3 +73,41 @@ class TAT_Update_Timestamp_Table(BaseModel):
         self.last_file_update_timestamp = last_file_update_timestamp
         self.last_record_update_timestamp = last_record_update_timestamp
 
+
+class Payload_Table(BaseModel):
+    __tablename__ = 'payload'
+    id = Column(Integer, primary_key=True, nullable=False)
+    sample_id = Column(String(24))
+    module_id = Column(String(24))
+    module_type = Column(String(24))
+    timestamp = Column(String(24))
+
+    def __init__(self,sample_id='',module_id='',module_type='',timestamp=''):
+        self.sample_id = sample_id
+        self.module_id = module_id
+        self.module_type = module_type
+        self.timestamp = timestamp
+
+class Result_Table(BaseModel):
+    __tablename__ = 'results'
+    id = Column(Integer,primary_key=True,nullable=False)
+    sample_id = Column(String(24))
+    test_code = Column(String(24))
+    analyzer_id = Column(String(24))
+    value = Column(String(24))
+    timestamp = Column(String(24))
+
+    def __init__(self,sample_id,test_code,analyzer_id,value,timestamp):
+        self.sample_id = sample_id
+        self.test_code = test_code
+        self.analyzer_id = analyzer_id
+        self.value = value
+        self.timestamp = timestamp
+
+    def __repr__(self):
+        return 'id: ' + str(self.id)+'\t'+\
+            'sample_id: ' + self.sample_id+'\t'+\
+            'test_code: ' + self.test_code+'\t'+\
+            'analyzer_id: ' + self.analyzer_id+'\t'+\
+            'value: ' + self.value+'\t'+\
+            'timestamp: ' + self.timestamp
