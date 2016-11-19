@@ -68,43 +68,56 @@ class FlexlabControlParser():
             if file_content_list:
                 for line in file_content_list:
                     if isinstance(line,str):
+                        #parsing information for TAT statistic.
                         if -1 <> line.find(r' CM ADD ') and -1 <> line.find(r'timestamp='):
                             current_date_time = line.split(r'timestamp="')[1].split(r'"')[0]
                             if current_date_time >= self.last_updated_record_timestamp:
                                 sample_id = line.split(r' CM ADD ')[1].split(r'|')[1]
                                 if sample_id:
-                                    self.centrifuge_in_map[sample_id] = current_date_time
-                            else:
-                                break
+                                    if not self.centrifuge_in_map.has_key(sample_id):
+                                        self.centrifuge_in_map[sample_id] = current_date_time
+                                    elif self.centrifuge_in_map[sample_id] < current_date_time:
+                                        self.centrifuge_in_map[sample_id] = current_date_time
                         elif -1 <> line.find(r' CM RETURNED ') and -1 <> line.find(r'timestamp='):
                             current_date_time = line.split(r'timestamp="')[1].split(r'"')[0]
                             if current_date_time >= self.last_updated_record_timestamp:
                                 sample_id = line.split(r' CM RETURNED ')[1].split(r'^')[1]
                                 if sample_id:
-                                    self.centrifuge_out_map[sample_id] = current_date_time
-                            else:
-                                break
+                                    if not self.centrifuge_out_map.has_key(sample_id):
+                                        self.centrifuge_out_map[sample_id] = current_date_time
+                                    elif self.centrifuge_out_map[sample_id] < current_date_time:
+                                        self.centrifuge_out_map[sample_id] = current_date_time
                         elif -1 <> line.find(r' DCM RETURNED ') and -1 <> line.find(r'timestamp='):
                             current_date_time = line.split(r'timestamp="')[1].split(r'"')[0]
                             if current_date_time >= self.last_updated_record_timestamp:
                                 sample_id = line.split(r' DCM RETURNED ')[1].split(r'^')[1]
-                                self.decap_map[sample_id] = current_date_time
-                            else:
-                                break
+                                if sample_id:
+                                    if not self.decap_map.has_key(sample_id):
+                                        self.decap_map[sample_id] = current_date_time
+                                    elif self.decap_map[sample_id] < current_date_time:
+                                        self.decap_map[sample_id] = current_date_time
                         elif -1 <> line.find(r' SM RETURNED ') and -1 <> line.find(r'timestamp='):
                             current_date_time = line.split(r'timestamp="')[1].split(r'"')[0]
                             if current_date_time >= self.last_updated_record_timestamp:
                                 sample_id = line.split(r' SM RETURNED ')[1].split(r'^')[1]
-                                self.seal_map[sample_id] = current_date_time
-                            else:
-                                break
-                        elif -1 <> line.find(r'SRM SAMPLE-LOCATION ^') and -1 <> line.find(r'timestamp='):
+                                if sample_id:
+                                    if not self.seal_map.has_key(sample_id):
+                                        self.seal_map[sample_id] = current_date_time
+                                    elif self.seal_map[sample_id] < current_date_time:
+                                        self.seal_map[sample_id] = current_date_time
+                        #<SRM SAMPLE-LOCATION ^> as storage time stamp
+                        elif -1 <> line.find(r' SAMPLE-LOCATION ^') and -1 <> line.find(r'timestamp='):
                             current_date_time = line.split(r'timestamp="')[1].split(r'"')[0]
                             if current_date_time >= self.last_updated_record_timestamp:
-                                sample_id = line.split(r'SRM SAMPLE-LOCATION ^')[1].split(r'^')[0]
-                                self.store_map[sample_id] = current_date_time
-                            else:
-                                break
+                                sample_id = line.split(r' SAMPLE-LOCATION ^')[1].split(r'^')[0]
+                                if sample_id:
+                                    if not self.store_map.has_key(sample_id):
+                                        self.store_map[sample_id] = current_date_time
+                                    elif self.store_map[sample_id] < current_date_time:
+                                        self.store_map[sample_id] = current_date_time
+
+                        #parsing information for tubes returned from each module.
+
                 if last_updated_record_timestamp < current_date_time:
                     last_updated_record_timestamp = current_date_time
 
@@ -124,7 +137,7 @@ class FlexlabControlParser():
 
     def pre_work(self,log_folder):
         #please keep this evaluate sequence...
-        current_file_modified_timestamp = FilesFilter.get_latest_modified_timestamp(log_folder)
+        current_file_modified_timestamp = FilesFilter.get_latest_modified_timestamp(log_folder,r'CONTROL')
         log_file_list = FilesFilter.get_files_after_a_modified_timestamp(log_folder,self.last_file_modified_timestamp,r'CONTROL')
         log_file_list += FilesFilter.get_files_after_a_modified_timestamp(log_folder,self.last_file_modified_timestamp,r'Logs-')
         if str(current_file_modified_timestamp) > str(self.last_file_modified_timestamp):
