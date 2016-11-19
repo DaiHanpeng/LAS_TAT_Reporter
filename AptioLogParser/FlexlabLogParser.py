@@ -4,8 +4,9 @@ from zipfile import ZipFile
 import os
 
 from FilesFilter.FilesFilter import FilesFilter
-
+from DBInterface.Tables import Payload_Table
 from DBInterface.DBInterface import DBInterface,DBInterface_TAT_Update_Timestamp
+from DBInterface.Payload_Interface import Payload_Interface
 
 TABLE_UPDATE_TIMESTAMP_ID = r'Flaxlab'
 
@@ -27,12 +28,16 @@ class FlexlabControlParser():
         self.seal_map = {}
         self.store_map = {}
 
+        self.payload_list = list()
+
     def parse(self,log_file_list):
         self.centrifuge_in_map = {}
         self.centrifuge_out_map = {}
         self.decap_map = {}
         self.seal_map = {}
         self.store_map = {}
+
+        self.payload_list = []
 
         current_date_time = ''
         last_updated_record_timestamp = self.last_updated_record_timestamp
@@ -116,7 +121,15 @@ class FlexlabControlParser():
                                     elif self.store_map[sample_id] < current_date_time:
                                         self.store_map[sample_id] = current_date_time
 
-                        #parsing information for tubes returned from each module.
+                        #payload parsing.
+                        if isinstance(line,str):
+                            if -1 <> line.find(r' RETURNED ') and -1 <> line.find(r'timestamp='):
+                                payload_timestamp = line.split(r'timestamp="')[1].split(r'"')[0]
+                                payload_module_id = line.split(r'message="')[1].split()[0]
+                                payload_module_type = line.split(r'message=')[1].split()[1]
+                                payload_sample_id = line.split(r' RETURNED ')[1].split(r'^')[1]
+                                if payload_sample_id:
+                                    self.payload_list.append(Payload_Table(payload_sample_id,payload_module_id,payload_module_type,payload_timestamp))
 
                 if last_updated_record_timestamp < current_date_time:
                     last_updated_record_timestamp = current_date_time
@@ -134,6 +147,9 @@ class FlexlabControlParser():
         db_interface.insert_sample_decap(self.decap_map)
         db_interface.insert_sample_seal(self.seal_map)
         db_interface.insert_sample_store(self.store_map)
+
+        db_payload_interrface = Payload_Interface()
+        db_payload_interrface.add_new_records(self.payload_list)
 
     def pre_work(self,log_folder):
         #please keep this evaluate sequence...
@@ -173,7 +189,7 @@ class FlexlabControlParser():
 def test():
     flexlab_parser = FlexlabControlParser()
 
-    flexlab_log_folder = r'F:\Zhongshan\log_aptio_20161110\Log'
+    flexlab_log_folder = r'D:\01_Automation\20_Experiential_Conclusions_2015\53_Zhongshan_Aptio\01_Aptio\Log'
 
     flexlab_log_file_list = flexlab_parser.pre_work(flexlab_log_folder)
     print flexlab_log_file_list
