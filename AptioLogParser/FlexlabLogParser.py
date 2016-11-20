@@ -7,6 +7,7 @@ from FilesFilter.FilesFilter import FilesFilter
 from DBInterface.Tables import Payload_Table
 from DBInterface.TAT_Interface import TAT_Interface,TAT_Update_Timestamp_Interface
 from DBInterface.Payload_Interface import Payload_Interface
+from DBInterface.Exception_Interface import Exception_Table,Exception_Interface
 
 TABLE_UPDATE_TIMESTAMP_ID = r'Flaxlab'
 
@@ -29,6 +30,7 @@ class FlexlabControlParser():
         self.store_map = {}
 
         self.payload_list = list()
+        self.exception_list = list()
 
     def parse(self,log_file_list):
         self.centrifuge_in_map = {}
@@ -38,6 +40,7 @@ class FlexlabControlParser():
         self.store_map = {}
 
         self.payload_list = []
+        self.exception_list = []
 
         current_date_time = ''
         last_updated_record_timestamp = self.last_updated_record_timestamp
@@ -131,6 +134,17 @@ class FlexlabControlParser():
                                 if payload_sample_id:
                                     self.payload_list.append(Payload_Table(payload_sample_id,payload_module_id,payload_module_type,payload_timestamp))
 
+                        #error parsing
+                        if isinstance(line,str):
+                            if -1 <> line.find(r' SAMPLING-ERROR '):
+                                timestamp = line.split(r'timestamp="')[1].split(r'"')[0]
+                                module_id = line.split(r'message="')[1].split()[0]
+                                module_type = line.split(r'message=')[1].split()[1]
+                                sample_id = line.split(r' SAMPLING-ERROR ')[1].split(r'^')[1]
+                                err_code = r'SAMPLING-ERROR'
+                                if module_id and module_type and sample_id and err_code:
+                                    self.exception_list.append(Exception_Table(timestamp,module_id,module_type,sample_id,err_code))
+                #update timestamp.
                 if last_updated_record_timestamp < current_date_time:
                     last_updated_record_timestamp = current_date_time
 
@@ -150,6 +164,9 @@ class FlexlabControlParser():
 
         db_payload_interrface = Payload_Interface()
         db_payload_interrface.add_new_records(self.payload_list)
+
+        db_exception_interface = Exception_Interface()
+        db_exception_interface.add_new_records(self.exception_list)
 
     def pre_work(self,log_folder):
         #please keep this evaluate sequence...
