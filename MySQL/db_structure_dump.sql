@@ -32,6 +32,7 @@ CREATE TABLE `exceptions` (
   `id` int(32) NOT NULL,
   `timestamp` varchar(24) default NULL,
   `module_id` varchar(24) default NULL,
+  `module_type` varchar(24) default NULL,
   `sample_id` varchar(24) default NULL,
   `err_code` varchar(24) default NULL,
   PRIMARY KEY  (`id`),
@@ -154,4 +155,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-11-20 15:34:02
+-- Dump completed on 2016-11-20 15:47:39
