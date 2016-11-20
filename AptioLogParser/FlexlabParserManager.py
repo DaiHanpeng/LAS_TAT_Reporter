@@ -7,7 +7,7 @@ from threading import Timer
 
 from FlexlabLogParser import FlexlabControlParser
 
-from DBInterface.DBInterface import DBInterface
+from DBInterface.TAT_Interface import TAT_Interface
 
 from FilesFilter.FilesFilter import FilesFilter
 
@@ -30,7 +30,7 @@ class ParserManager():
         ISOTIMEFORMAT='%Y-%m-%d %X'
         print  time.strftime(ISOTIMEFORMAT,time.localtime())
         self.parser(CONTROL_LOG_FOLDER)
-        db_interface = DBInterface()
+        db_interface = TAT_Interface()
         db_interface.update_all_fields()
         self.timer = Timer(FILE_SCAN_INTERVAL,self.timing_exec_func)
         self.timer.start()

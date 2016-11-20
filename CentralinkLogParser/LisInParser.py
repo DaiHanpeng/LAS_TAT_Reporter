@@ -2,7 +2,7 @@ from datetime import *
 
 from FilesFilter.FilesFilter import FilesFilter
 
-from DBInterface.DBInterface import DBInterface,DBInterface_TAT_Update_Timestamp
+from DBInterface.TAT_Interface import TAT_Interface,TAT_Update_Timestamp_Interface
 
 TABLE_UPDATE_TIMESTAMP_ID = r'LIS_In'
 
@@ -14,7 +14,7 @@ class LisInParser():
         self.last_file_modified_timestamp = 0   #last checked file modified time
         self.last_updated_record_timestamp = '' #timestamp of the last updated record.
 
-        timestamp_table_interface = DBInterface_TAT_Update_Timestamp()
+        timestamp_table_interface = TAT_Update_Timestamp_Interface()
         self.last_file_modified_timestamp = timestamp_table_interface.get_log_file_last_update_timestamp(TABLE_UPDATE_TIMESTAMP_ID)
         self.last_updated_record_timestamp = timestamp_table_interface.get_record_last_update_timestamp(TABLE_UPDATE_TIMESTAMP_ID)
 
@@ -65,12 +65,12 @@ class LisInParser():
         if last_updated_record_timestamp > self.last_updated_record_timestamp:
             self.last_updated_record_timestamp = last_updated_record_timestamp
             #update to db
-            timestamp_table_interface = DBInterface_TAT_Update_Timestamp()
+            timestamp_table_interface = TAT_Update_Timestamp_Interface()
             timestamp_table_interface.set_record_last_update_timestamp(TABLE_UPDATE_TIMESTAMP_ID,self.last_updated_record_timestamp)
 
 
     def to_db(self):
-        db_interface = DBInterface()
+        db_interface = TAT_Interface()
         db_interface.insert_sample_lis_order(self.sample_order_map)
 
     def pre_work(self,log_folder):
@@ -80,7 +80,7 @@ class LisInParser():
         if str(current_file_modified_timestamp) > str(self.last_file_modified_timestamp):
             self.last_file_modified_timestamp = current_file_modified_timestamp
             #update to db
-            timestamp_table_interface = DBInterface_TAT_Update_Timestamp()
+            timestamp_table_interface = TAT_Update_Timestamp_Interface()
             timestamp_table_interface.set_log_file_last_update_timestamp(TABLE_UPDATE_TIMESTAMP_ID,self.last_file_modified_timestamp)
 
         return log_file_list

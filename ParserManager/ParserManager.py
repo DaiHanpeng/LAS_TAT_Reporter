@@ -10,7 +10,7 @@ from CentralinkLogParser.LisInParser import LisInParser
 from CentralinkLogParser.LisOutParser import LisOutParser
 from AptioLogParser.FlexlabLogParser import FlexlabControlParser
 
-from DBInterface.DBInterface import DBInterface,DBInterface_TAT_Update_Timestamp
+from DBInterface.TAT_Interface import TAT_Interface,TAT_Update_Timestamp_Interface
 
 from FilesFilter.FilesFilter import FilesFilter
 
@@ -39,7 +39,7 @@ class ParserManager():
         ISOTIMEFORMAT='%Y-%m-%d %X'
         print  time.strftime(ISOTIMEFORMAT,time.localtime())
         self.parser()
-        db_interface = DBInterface()
+        db_interface = TAT_Interface()
         db_interface.update_all_fields()
         self.timer = Timer(FILE_SCAN_INTERVAL,self.timing_exec_func)
         self.timer.start()
@@ -198,7 +198,7 @@ def test2():
 
 
 def test3():
-    interface = DBInterface_TAT_Update_Timestamp()
+    interface = TAT_Update_Timestamp_Interface()
     #interface.check_if_record_exist(r'helll')
     #interface.check_if_record_exist(r'Advia2400')
 

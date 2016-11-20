@@ -9,7 +9,7 @@ from LasReceiveParser import LasReceiveParser
 from LisInParser import LisInParser
 from LisOutParser import LisOutParser
 
-from DBInterface.DBInterface import DBInterface,DBInterface_TAT_Update_Timestamp
+from DBInterface.TAT_Interface import TAT_Interface,TAT_Update_Timestamp_Interface
 
 from FilesFilter.FilesFilter import FilesFilter
 
@@ -36,7 +36,7 @@ class ParserManager():
         ISOTIMEFORMAT='%Y-%m-%d %X'
         print  time.strftime(ISOTIMEFORMAT,time.localtime())
         self.parser(TRANSLATOR_LOG_FOLDER)
-        db_interface = DBInterface()
+        db_interface = TAT_Interface()
         db_interface.update_all_fields()
         self.timer = Timer(FILE_SCAN_INTERVAL,self.timing_exec_func)
         self.timer.start()
@@ -178,7 +178,7 @@ def test2():
     lis_out_parser.work(lis_out_log_list)
 
 def test3():
-    interface = DBInterface_TAT_Update_Timestamp()
+    interface = TAT_Update_Timestamp_Interface()
     #interface.check_if_record_exist(r'helll')
     #interface.check_if_record_exist(r'Advia2400')
 

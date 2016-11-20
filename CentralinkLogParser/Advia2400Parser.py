@@ -2,7 +2,7 @@ from datetime import *
 
 from FilesFilter.FilesFilter import FilesFilter
 
-from DBInterface.DBInterface import DBInterface,DBInterface_TAT_Update_Timestamp
+from DBInterface.TAT_Interface import TAT_Interface,TAT_Update_Timestamp_Interface
 
 TABLE_UPDATE_TIMESTAMP_ID = r'Advia2400'
 
@@ -14,7 +14,7 @@ class Advia2400Parser():
         self.last_file_modified_timestamp = 0   #last checked file modified time
         self.last_updated_record_timestamp = '' #timestamp of the last updated record.
 
-        timestamp_table_interface = DBInterface_TAT_Update_Timestamp()
+        timestamp_table_interface = TAT_Update_Timestamp_Interface()
         self.last_file_modified_timestamp = timestamp_table_interface.get_log_file_last_update_timestamp(TABLE_UPDATE_TIMESTAMP_ID)
         self.last_updated_record_timestamp = timestamp_table_interface.get_record_last_update_timestamp(TABLE_UPDATE_TIMESTAMP_ID)
 
@@ -72,11 +72,11 @@ class Advia2400Parser():
         if last_updated_record_timestamp > self.last_updated_record_timestamp:
             self.last_updated_record_timestamp = last_updated_record_timestamp
             #update to db
-            timestamp_table_interface = DBInterface_TAT_Update_Timestamp()
+            timestamp_table_interface = TAT_Update_Timestamp_Interface()
             timestamp_table_interface.set_record_last_update_timestamp(TABLE_UPDATE_TIMESTAMP_ID,self.last_updated_record_timestamp)
 
     def to_db(self):
-        db_interface = DBInterface()
+        db_interface = TAT_Interface()
         db_interface.insert_advia_query(self.sample_query_map)
         db_interface.insert_advia_result(self.sample_result_map)
 
@@ -87,7 +87,7 @@ class Advia2400Parser():
         if str(current_file_modified_timestamp) > str(self.last_file_modified_timestamp):
             self.last_file_modified_timestamp = current_file_modified_timestamp
             #update to db
-            timestamp_table_interface = DBInterface_TAT_Update_Timestamp()
+            timestamp_table_interface = TAT_Update_Timestamp_Interface()
             timestamp_table_interface.set_log_file_last_update_timestamp(TABLE_UPDATE_TIMESTAMP_ID,self.last_file_modified_timestamp)
 
         return log_file_list

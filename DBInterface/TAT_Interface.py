@@ -11,7 +11,7 @@ from sqlalchemy import func, or_, not_
 from Tables import TAT_Table,BaseModel,TAT_Update_Timestamp_Table
 
 
-class DBInterface():
+class TAT_Interface():
     """
     db interface for sql.
     """
@@ -227,7 +227,7 @@ class DBInterface():
                 #self.session.commit()
 
 
-class DBInterface_TAT_Update_Timestamp():
+class TAT_Update_Timestamp_Interface():
     """
     db interface for sql.
     """
@@ -313,7 +313,7 @@ def test():
     db_interface.update_all_fields()
 
 def test2():
-    interface = DBInterface_TAT_Update_Timestamp()
+    interface = TAT_Update_Timestamp_Interface()
     #interface.check_if_record_exist(r'helll')
     #interface.check_if_record_exist(r'Advia2400')
 
