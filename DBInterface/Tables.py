@@ -111,3 +111,19 @@ class Result_Table(BaseModel):
             'analyzer_id: ' + self.analyzer_id+'\t'+\
             'value: ' + self.value+'\t'+\
             'timestamp: ' + self.timestamp
+
+class Exception_Table(BaseModel):
+    __tablename__ = 'exceptions'
+    id = Column(Integer, primary_key=True, nullable=False)
+    timestamp = Column(String(24))
+    module_id = Column(String(24))
+    module_type = Column(String(24))
+    sample_id = Column(String(24))
+    err_code = Column(String(24))
+
+    def __init__(self, timestamp='', module_id='', module_type='', sample_id='', err_code=''):
+        self.timestamp = timestamp
+        self.module_id = module_id
+        self.module_type = module_type
+        self.sample_id = sample_id
+        self.err_code = err_code

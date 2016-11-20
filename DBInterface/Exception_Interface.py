@@ -1,10 +1,10 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from Tables import BaseModel,Payload_Table
+from Tables import BaseModel,Exception_Table
 
 
-class Payload_Interface():
+class Exception_Interface():
     """
     db interface for payload table.
     """
@@ -28,14 +28,14 @@ class Payload_Interface():
     def init_tables(self):
         BaseModel.metadata.create_all(self.engine)
 
-    def add_new_record(self,sample_id,module_id,module_type,timestamp):
-        self.session.add(Payload_Table(sample_id,module_id,module_type,timestamp))
+    def add_new_record(self,timestamp,module_id,module_type,sample_id,err_code):
+        self.session.add(Exception_Table(timestamp,module_id,module_type,sample_id,err_code))
 
-    def add_new_records(self,payload_list):
-        if isinstance(payload_list,list):
-            for item in payload_list:
-                if isinstance(item,Payload_Table):
-                    self.add_new_record(item.sample_id,item.module_id,item.module_type,item.timestamp)
+    def add_new_records(self,err_list):
+        if isinstance(err_list,list):
+            for item in err_list:
+                if isinstance(item,Exception_Table):
+                    self.add_new_record(item.timestamp,item.module_id,item.module_type,item.sample_id,item.err_code)
             self.write_to_db()
 
     def write_to_db(self):
