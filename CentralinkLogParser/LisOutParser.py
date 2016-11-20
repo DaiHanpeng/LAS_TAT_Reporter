@@ -65,7 +65,7 @@ class LisOutParser():
                             elif self.sample_result_map[sample_id] < current_date_time:
                                 self.sample_result_map[sample_id] = current_date_time
                         #parsing for result information
-                        elif line.startswith(r'R|') and len(line.split(r'|')) > 7:
+                        elif line.startswith(r'R|') and len(line.split(r'||')) > 4 and -1 <> line.find(r'^^^N|'):
                             sample_id = ''
                             test_code = line.split(r'^^^')[1].split(r'^')[0]
                             analyzer_id = line.split(r'||')[-1].strip('\n')
@@ -99,9 +99,6 @@ class LisOutParser():
 
         db_result_interface = Result_Interface()
         db_result_interface.add_new_records(self.result_list)
-        print 'result list'
-        for item in self.result_list:
-            print item
 
     def pre_work(self,log_folder):
         #please keep this evaluate sequence...
@@ -128,7 +125,7 @@ class LisOutParser():
 
 def test():
     lis_out_parser = LisOutParser()
-    lis_out_log_folder = r'D:\01_Automation\23_Experiential_Conclusions_2016\19_Anhui_Provicial_Hospital\Log\trl\LIS_Translator_out'
+    lis_out_log_folder = r'F:\Zhongshan\log_centralink_20161110\trl\LIS_OUT_Translator'
     lis_out_log_file_list = lis_out_parser.pre_work(lis_out_log_folder)
     lis_out_parser.work(lis_out_log_file_list)
     print lis_out_parser
