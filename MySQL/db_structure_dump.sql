@@ -29,7 +29,7 @@ DROP TABLE IF EXISTS `exceptions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `exceptions` (
-  `id` int(11) NOT NULL auto_increment,
+  `id` int(32) NOT NULL,
   `timestamp` varchar(24) default NULL,
   `module_id` varchar(24) default NULL,
   `sample_id` varchar(24) default NULL,
@@ -154,4 +154,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-11-19 23:15:55
+-- Dump completed on 2016-11-20 15:34:02
